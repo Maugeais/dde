@@ -1,4 +1,0 @@
-gcc -shared -Wl,-soname,ddec -o ddec.so -fPIC ddec.c
-
-
-gcc -I.. -g -D__cminpack_long_double__ -shared -Wl,-soname,ddec -o ddec.so -fPIC ddec.c ./libcminpackld.a  -lm
