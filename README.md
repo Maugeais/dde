@@ -37,13 +37,13 @@ with tau a delay function depending on t and x: tau(t, x)
         
     t, X = dde.rk4Delay(t0, X0, T, cFileName, params, alg) 
     
-    - t0 est un vecteur de longueur N, X0 un vecteur de type NxK, ils représentent les conditions initiales
-    - cFileName est le nom du fichier C contenant fun et tau
-    - les paramètres sont des paramètres utilisateurs qui seront passés à fun et tau 
-    - alg est l'algorythme de résolution  utilisé, choisis parmi
-        * rk4Neutral, schéma de type Runge Kutta 4 (explicite)
-        * impTrNeutral, schéma de type trapèze implicite
-        * eulerImpNeutral, schéma de type Euler implicite
-        * rk4, de type Runge Kutta 4 pour les systèmes non neutres
+        t0 vector of length N, X0 un vecteur de type NxK, ils représentent les conditions initiales
+        cFileName est le nom du fichier C contenant fun et tau
+        les paramètres sont des paramètres utilisateurs qui seront passés à fun et tau 
+        alg est l'algorythme de résolution  utilisé, choisis parmi
+            * rk4Neutral, schéma de type Runge Kutta 4 (explicite)
+            * impTrNeutral, schéma de type trapèze implicite
+            * eulerImpNeutral, schéma de type Euler implicite
+            * rk4, de type Runge Kutta 4 pour les systèmes non neutres
         
     Toutes les méthodes sont à pas constant (déterminer par t0[1]-t0[0]
