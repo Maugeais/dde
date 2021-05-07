@@ -1,35 +1,45 @@
-# Yin
+Programme de résolution d'équation à retard neutre, de la forme 
+x' = f(t, x, x(t-tau), x'(t-tau))
 
-Fast Python implementation of the Yin algorithm: a fundamental frequency estimator.
+tau étant une fonction retard, tau = tau(t, x)
 
-Based on the article:
+* Installation : 
 
-\[1\] De Cheveigné, A., & Kawahara, H. (2002). YIN, a fundamental frequency estimator for speech and music. The Journal of the Acoustical Society of America, 111(4), 1917-1930.
+    Il faut télécharger cminpack-1.3.8 par exemple sur https://github.com/devernay/cminpack
 
-All the functions in the code correspond to steps in the article \[1\]. Meanwhile, the difference function has been modify substantially in order to improve speed. Finally, speed has been improved by more than 1000x.
+    Compilation + copie de libcminpackld.a dans /usr/local/lib
 
+    Ajout dans le pythonpath
 
-## Prerequisites
-
- * [Numpy](http://www.numpy.org/)
- * [Scipy](http://www.scipy.org/)
- * [Matlplotlib](http://matplotlib.org/) (for graphing)
-
-## Usage
-
-$python yin.py
-
-All parameters (i.e frequence min, frequence max, harmonic threshold) in the yin.py function should be adapted to obtain good results. See the article \[1\] for more details. 
+    export PYTHONPATH=$PYTHONPATH:/home/maugeais/Documents/Acoustique/Vents/Flute/dde/
 
 
-## Authors
+* Fichier de données :
 
-Patrice Guyot
+    Le fichier en C doit contenir deux fonctions : 
+        - void fun(double t, double *x, double *xdelay, double *xdelayDer, double *der, double *params)
+        - double tau(double t, double *x, double *params)
+        
+        t le temps (double)
+        x un vecteur (double)
+        xdelay vecteur de même taille que x (= x(t-tau))
+        xdelayDer vecteur de même taille que x (=x'(t-tau))
+        der vecteur de même taille que x (sortie x')
+        params sont des paramêtres transmis par l'utilisateur
+        
+* Fichier python :
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1220947.svg)](https://doi.org/10.5281/zenodo.1220947)
-
-If you use this code, please cite:
-Patrice Guyot. (2018, April 19). Fast Python implementation of the Yin algorithm (Version v1.1.1). Zenodo. http://doi.org/10.5281/zenodo.1220947
-
-
-Previous works on the implementation of the YIN algorithm have been made thanks to Robin Larvor, Maxime Le Coz and Lionel Koenig.
+    import dde
+        
+    t, X = dde.rk4Delay(t0, X0, T, cFileName, params, alg) 
+    
+    - t0 est un vecteur de longueur N, X0 un vecteur de type NxK, ils représentent les conditions initiales
+    - cFileName est le nom du fichier C contenant fun et tau
+    - les paramètres sont des paramètres utilisateurs qui seront passés à fun et tau 
+    - alg est l'algorythme de résolution  utilisé, choisis parmi
+        * rk4Neutral, schéma de type Runge Kutta 4 (explicite)
+        * impTrNeutral, schéma de type trapèze implicite
+        * eulerImpNeutral, schéma de type Euler implicite
+        * rk4, de type Runge Kutta 4 pour les systèmes non neutres
+        
+    Toutes les méthodes sont à pas constant (déterminer par t0[1]-t0[0]
