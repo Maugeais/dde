@@ -5,31 +5,33 @@ x' = f(t, x, x(t-tau), x'(t-tau))
 
 with tau a delay function depending on t and x: tau(t, x)
 
-* Installation : 
+* Dependencies : 
 
-    Il faut télécharger cminpack-1.3.8 par exemple sur https://github.com/devernay/cminpack
+    needs cminpack-1.3.8, downloadable at https://github.com/devernay/cminpack
 
-    Compilation + copie de libcminpackld.a dans /usr/local/lib
+    Compilation and copie of libcminpackld.a in /usr/local/lib
 
-    Ajout dans le pythonpath
+    Add to the pythonpath 
 
     export PYTHONPATH=$PYTHONPATH:/home/maugeais/Documents/Acoustique/Vents/Flute/dde/
+    
+    Inside dde/src, type make
 
 
-* Fichier de données :
+* Model file :
 
-    Le fichier en C doit contenir deux fonctions : 
+    The C must contain two functions : 
         - void fun(double t, double *x, double *xdelay, double *xdelayDer, double *der, double *params)
         - double tau(double t, double *x, double *params)
         
-        t le temps (double)
-        x un vecteur (double)
-        xdelay vecteur de même taille que x (= x(t-tau))
-        xdelayDer vecteur de même taille que x (=x'(t-tau))
-        der vecteur de même taille que x (sortie x')
-        params sont des paramêtres transmis par l'utilisateur
+        t = time (double)
+        x = position (double *)
+        xdelay = delayed position x(t-tau), (double *)
+        xdelayDer = delayed speed x'(t-tau), (double *)
+        der = speed x' (output)
+        params = parameters given by the user 
         
-* Fichier python :
+* Python file :
 
     import dde
         
