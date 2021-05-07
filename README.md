@@ -53,5 +53,6 @@ with tau a delay function depending on t and x: tau(t, x)
 
     Output
     
-        t, X : results of the computation. t is of length n = len(t0) + T/(t0[1]-t0[0])
+        t, X : results of the computation. 
+        t is of length n = len(t0) + T/(t0[1]-t0[0])
         X is of shape nxK
