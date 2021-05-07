@@ -35,15 +35,23 @@ with tau a delay function depending on t and x: tau(t, x)
 
     import dde
         
-    t, X = dde.rk4Delay(t0, X0, T, cFileName, params, alg) 
+    t, X = dde.rk4Delay(t0, X0, T, cFileName, params, alg)
     
-        t0 vector of length N, X0 un vecteur de type NxK, ils représentent les conditions initiales
-        cFileName est le nom du fichier C contenant fun et tau
-        les paramètres sont des paramètres utilisateurs qui seront passés à fun et tau 
-        alg est l'algorythme de résolution  utilisé, choisis parmi
-            * rk4Neutral, schéma de type Runge Kutta 4 (explicite)
-            * impTrNeutral, schéma de type trapèze implicite
-            * eulerImpNeutral, schéma de type Euler implicite
-            * rk4, de type Runge Kutta 4 pour les systèmes non neutres
+    Input
+    
+        t0 vector of length N, X0 of shape NxK, it stores the initial conditions
+        T is the end time for computation. All the methods use a constant step, given by t0[1]-t0[0]
+        cFileName, name of the C file containing fun and tau
+        params are parameters defined by the user that are passed to fun and tau 
+        alg is the choice of algorythm
+            * rk4Neutral, explicit Runge Kutta 4 scheme, adapted for delay neutral equations
+            * impTrNeutral, implicite trapzoid scheme, adapted for deley neutral equations
+            * eulerImpNeutral, simple implicit euler scheme for delay neutral equations
+            * rk4, explicit Runge Kutta 4 scheme, for delay equations (non neutral !!!!)
         
-    Toutes les méthodes sont à pas constant (déterminer par t0[1]-t0[0]
+    
+
+    Output
+    
+        t, X : results of the computation. t is of length n = len(t0) + T/(t0[1]-t0[0])
+        X is of shape nxK
