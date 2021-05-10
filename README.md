@@ -1,4 +1,4 @@
-# dde
+# dde, beta version 0.1
 Delay differential equation solvers, special emphasis on neutral dde of the form
 
 x' = f(t, x, x(t-tau), x'(t-tau))
