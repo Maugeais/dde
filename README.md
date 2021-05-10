@@ -9,7 +9,9 @@ with tau a delay function depending on t and x: tau(t, x)
 
     needs cminpack-1.3.8, downloadable at https://github.com/devernay/cminpack
 
-    Compilation and copie of libcminpackld.a in /usr/local/lib
+    make with make longdouble
+    
+    Compilation and copy of libcminpackld.a in /usr/local/lib
 
     Add to the pythonpath 
 

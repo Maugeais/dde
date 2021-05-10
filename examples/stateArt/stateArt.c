@@ -29,7 +29,7 @@ double computeUj(double t, double *params){
         }
         
     } else {
-        Uj = sqrt(params[0]*2/rho); // equation 1.2 page 12
+        Uj = sqrt(params[1]*2/rho); // equation 1.2 page 12
     }
     return(Uj);
 }

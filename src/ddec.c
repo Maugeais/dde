@@ -420,7 +420,6 @@ struct re_val eulerImpNeutral(int dim, int N0, double *t0, double *X0, float T, 
     real xtol, epsfcn, factor, fnorm;
     real x[dim], fvec[dim], diag[dim], fjac[dim*dim], r[dim*(dim+1)/2], qtf[dim], wa1[dim], wa2[dim], wa3[dim], wa4[dim];
 
-    printf("test\n");
     n = dim;
 
     ldfjac = dim;

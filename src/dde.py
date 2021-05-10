@@ -12,7 +12,6 @@ class ReVal(ctypes.Structure):
     ]
 
 
-print(os.path.split(os.path.realpath(__file__))[0])
 dde_c = ctypes.CDLL(os.path.split(os.path.realpath(__file__))[0]+"/ddec.so")
 
 dde_c.rk4Neutral.restype = ReVal
@@ -24,7 +23,7 @@ dde_c.preDerPol(2, ctypes.c_float(1))
 
 def compile(fname) :
         
-    root = fname.split('.')[0]
+    root = '.'.join(fname.split('.')[:-1])
 
     # Test si le fichier .so n'exite pas, ou bien que la date du .c est > à la date du .so
     
@@ -58,6 +57,8 @@ def rk4Delay(t0, X0, T, fname, params, alg = 'rk4Neutral') :
     t0 = np.array(t0).astype(np.double)
     X0 = np.array(X0).astype(np.double)
     params = np.array(params).astype(np.double)
+    
+ 
     
     if alg == 'rk4Neutral' :
         
