@@ -16,9 +16,9 @@ def stateArtModel(TMax, h, params, alg = 'rk4Neutral', interpOrder = 2) :
     for i in range(2*K+2) :
         
         if i % 2 == 0 :
-            X0[:, i] = 1e-10*np.cos(2*np.pi*t0*omega1/3.5)
+            X0[:, i] = 1e-6*np.cos(2*np.pi*t0*omega1/3.5)
         else :
-            X0[:, i] = -1e-10*np.sin(2*np.pi*t0*omega1/3.5)
+            X0[:, i] = -1e-6*np.sin(2*np.pi*t0*omega1/3.5)
        
     t0 *= omega1
     T = TMax*omega1
@@ -32,29 +32,29 @@ def stateArtModel(TMax, h, params, alg = 'rk4Neutral', interpOrder = 2) :
     plt.legend()
     
     # Calcul les fréquences
-    w_len=1024*8
-    w_step=256//2
+    # w_len=1024*8
+    # w_step=256//2
     
-    f0_min=200
-    f0_max=2500
-    harmo_thresh=0.6
+    # f0_min=200
+    # f0_max=2500
+    # harmo_thresh=0.6
    
-    sr = int(omega1/(t[1]-t[0]))
+    # sr = int(omega1/(t[1]-t[0]))
         
-    pitches, harmonic_rates, argmins, times = yin.compute_yin(p[len(t0):], sr, None, w_len, w_step, f0_min, f0_max, harmo_thresh)
-    pitches = np.array(pitches)
-    times = np.array(times)
+    # pitches, harmonic_rates, argmins, times = yin.compute_yin(p[len(t0):], sr, None, w_len, w_step, f0_min, f0_max, harmo_thresh)
+    # pitches = np.array(pitches)
+    # times = np.array(times)
     
-    Pm = params[0]+(TMax/2-abs(times-TMax/2))/TMax*(params[1]-params[0])
+    # Pm = params[0]+(TMax/2-abs(times-TMax/2))/TMax*(params[1]-params[0])
     
-    plt.figure("Yin")
-    ax = plt.gca()
+    # plt.figure("Yin")
+    # ax = plt.gca()
     
-    color=next(ax._get_lines.prop_cycler)['color']
-    plt.plot(Pm[:len(Pm)//2], np.array(pitches[:len(Pm)//2]), '-', c = color, label = label)
-    plt.plot(Pm[len(Pm)//2:], np.array(pitches[len(Pm)//2:]), ':', c = color)
+    # color=next(ax._get_lines.prop_cycler)['color']
+    # plt.plot(Pm[:len(Pm)//2], np.array(pitches[:len(Pm)//2]), '-', c = color, label = label)
+    # plt.plot(Pm[len(Pm)//2:], np.array(pitches[len(Pm)//2:]), ':', c = color)
     
-    plt.legend()
+    # plt.legend()
 
     
 #    from scipy.io.wavfile import write
@@ -63,9 +63,9 @@ def stateArtModel(TMax, h, params, alg = 'rk4Neutral', interpOrder = 2) :
     
     
     
-stateArtModel(0.4, 1/(32*44100), params=[0, 500, 20], alg = 'eulerNeutral', interpOrder = 2)
+stateArtModel(0.4, 1/(8*44100), params=[0, 500, 20], alg = 'eulerNeutral', interpOrder = 2)
 # stateArtModel(0.4, 1/(32*44100), params=[0, 500, 20], alg = 'eulerImpNeutral', interpOrder = 2)
-stateArtModel(0.4, 1/(32*44100), params=[0, 500, 20], alg = 'impTrNeutral', interpOrder = 2)
+stateArtModel(0.4, 1/(8*44100), params=[0, 500, 20], alg = 'impTrNeutral', interpOrder = 2)
 # stateArtModel(0.4, 1/(32*44100), params=[0, 500, 20], alg = 'rk4Neutral', interpOrder = 2) 
 # stateArtModel(20, 1/(8*44100), params=[30, 500, 20], alg = 'rk4Neutral') 
 # stateArtModel(20, 1/(16*44100), params=[30, 500, 20], alg = 'rk4Neutral') 

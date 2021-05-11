@@ -20,9 +20,9 @@ def stateArtModel(h, params, alg = 'rk4Neutral', tref = [], pref = []) :
     for i in range(2*K+2) :
         
         if i % 2 == 0 :
-            X0[:, i] = 1e-10*np.cos(2*np.pi*t0*omega1/3.5)
+            X0[:, i] = 1e-6*np.cos(2*np.pi*t0*omega1/3.5)
         else :
-            X0[:, i] = -1e-10*np.sin(2*np.pi*t0*omega1/3.5)
+            X0[:, i] = -1e-6*np.sin(2*np.pi*t0*omega1/3.5)
        
     t0 *= omega1
     
