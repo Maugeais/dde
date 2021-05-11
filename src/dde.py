@@ -15,11 +15,11 @@ class ReVal(ctypes.Structure):
 dde_c = ctypes.CDLL(os.path.split(os.path.realpath(__file__))[0]+"/ddec.so")
 
 dde_c.rk4Neutral.restype = ReVal
+dde_c.eulerNeutral.restype = ReVal
 dde_c.eulerImpNeutral.restype = ReVal
 dde_c.impTrNeutral.restype = ReVal
 dde_c.rk4Neutral.restype = ReVal
 
-dde_c.preDerPol(2, ctypes.c_float(1))
 
 def compile(fname) :
         
@@ -40,8 +40,9 @@ def compile(fname) :
 
     
 
-def rk4Delay(t0, X0, T, fname, params, alg = 'rk4Neutral') :
+def rk4Delay(t0, X0, T, fname, params, alg = 'rk4Neutral', interpOrder = 2) :
     
+    dde_c.preDerPol(interpOrder)
 
     
     fun_c, tau_c = compile(fname);
@@ -66,8 +67,15 @@ def rk4Delay(t0, X0, T, fname, params, alg = 'rk4Neutral') :
                   X0.ctypes.data_as(ctypes.POINTER(ctypes.c_longdouble)), ctypes.c_float(T), 
                   fun_c, tau_c, N, params.ctypes.data_as(ctypes.POINTER(ctypes.c_longdouble)))
         
-    elif alg == 'eulerImpNeutral' :
+    elif alg == 'eulerNeutral' :
         
+        
+        r = dde_c.eulerNeutral(dim, N0, t0.ctypes.data_as(ctypes.POINTER(ctypes.c_longdouble)), 
+                  X0.ctypes.data_as(ctypes.POINTER(ctypes.c_longdouble)), ctypes.c_float(T), 
+                  fun_c, tau_c, N, params.ctypes.data_as(ctypes.POINTER(ctypes.c_longdouble)))          
+        
+    elif alg == 'eulerImpNeutral' :
+
         r = dde_c.eulerImpNeutral(dim, N0, t0.ctypes.data_as(ctypes.POINTER(ctypes.c_longdouble)), 
                   X0.ctypes.data_as(ctypes.POINTER(ctypes.c_longdouble)), ctypes.c_float(T), 
                   fun_c, tau_c, N, params.ctypes.data_as(ctypes.POINTER(ctypes.c_longdouble)))        

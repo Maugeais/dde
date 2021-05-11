@@ -46,7 +46,7 @@ def stateArtModel(TMax, h, params, alg = 'rk4Neutral', tref = [], pref = []) :
         return(t, p)
     
 """ Test de bellen """    
-def bellenModel(TMax, h, params, alg = 'rk4Neutral', tref = [], pref = []) :
+def bellenModel(TMax, h, params, alg = ['rk4Neutral', 2], tref = [], pref = []) :
     
     h /= 10
 
@@ -57,8 +57,9 @@ def bellenModel(TMax, h, params, alg = 'rk4Neutral', tref = [], pref = []) :
       
     
     start = process_time() 
+
             
-    t, p = dde.rk4Delay(t0, X0, TMax, '../examples/bellen/bellen.c', params, alg = alg) 
+    t, p = dde.rk4Delay(t0, X0, TMax, '../examples/bellen/bellen.c', params, alg = alg[0], interpOrder=alg[1]) 
     
     stop = process_time()
     
@@ -77,11 +78,14 @@ def testModel(func = stateArtModel, H = []) :
         
     output = open('benchmark_'+func.__name__+'_.txt', 'w')
     
-    tref, pref = func(1, H[-1], params=[0, 500, 10], alg = 'rk4Neutral') 
+    tref, pref = func(1, H[-1], params=[0, 500, 10], alg = ['rk4Neutral', 2]) 
     
-    for alg in ['rk4Neutral', 'impTrNeutral', 'eulerImpNeutral'] :
+    for alg in [['rk4Neutral', 1], ['rk4Neutral', 2], ['rk4Neutral', 3],
+                ['eulerNeutral', 1], ['eulerNeutral', 2], ['eulerNeutral', 3], 
+                ['impTrNeutral', 1], ['impTrNeutral', 2], ['impTrNeutral', 3], 
+                ['eulerImpNeutral', 1], ['eulerImpNeutral', 2], ['eulerImpNeutral', 3]] :
     
-        output.write(alg+'\n')
+        output.write(alg[0]+str(alg[1])+'\n')
         
         r1 = []
         
@@ -97,4 +101,4 @@ def testModel(func = stateArtModel, H = []) :
 
 
 # testModel(stateArtModel, H=1/(2**np.arange(4)))
-testModel(bellenModel, H=1/(2**np.arange(16)))
+testModel(bellenModel, H=0.1/(2**np.arange(7)))
