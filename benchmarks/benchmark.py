@@ -10,11 +10,11 @@ from time import process_time
 K = 6
 omega1 = 2511
 
-def stateArtModel(TMax, h, params, alg = 'rk4Neutral', tref = [], pref = []) :  
+def stateArtModel(h, params, alg = 'rk4Neutral', tref = [], pref = []) :  
     
     h /= 44100
     
-    t0 = np.arange(-1, h, h)
+    t0 = np.arange(-1e-3, h, h)
     X0 = np.zeros((len(t0), 2*K+2))  
         
     for i in range(2*K+2) :
@@ -25,11 +25,10 @@ def stateArtModel(TMax, h, params, alg = 'rk4Neutral', tref = [], pref = []) :
             X0[:, i] = -1e-10*np.sin(2*np.pi*t0*omega1/3.5)
        
     t0 *= omega1
-    T = TMax*omega1
     
     start = process_time() 
             
-    t, X = dde.rk4Delay(t0, X0, T, '../examples/stateArt/stateArt.c', params, alg = alg) 
+    t, X = dde.rk4Delay(t0, X0, omega1*0.4, '../examples/stateArt/stateArt.c', params, alg = alg[0], interpOrder=alg[1]) 
     
     stop = process_time()
     
@@ -46,7 +45,7 @@ def stateArtModel(TMax, h, params, alg = 'rk4Neutral', tref = [], pref = []) :
         return(t, p)
     
 """ Test de bellen """    
-def bellenModel(TMax, h, params, alg = ['rk4Neutral', 2], tref = [], pref = []) :
+def bellenModel(h, params, alg = ['rk4Neutral', 2], tref = [], pref = []) :
     
     h /= 10
 
@@ -59,7 +58,7 @@ def bellenModel(TMax, h, params, alg = ['rk4Neutral', 2], tref = [], pref = []) 
     start = process_time() 
 
             
-    t, p = dde.rk4Delay(t0, X0, TMax, '../examples/bellen/bellen.c', params, alg = alg[0], interpOrder=alg[1]) 
+    t, p = dde.rk4Delay(t0, X0, 4., '../examples/bellen/bellen.c', params, alg = alg[0], interpOrder=alg[1]) 
     
     stop = process_time()
     
@@ -78,20 +77,21 @@ def testModel(func = stateArtModel, H = []) :
         
     output = open('benchmark_'+func.__name__+'_.txt', 'w')
     
-    tref, pref = func(1, H[-1], params=[0, 500, 10], alg = ['rk4Neutral', 2]) 
+    tref, pref = func(H[-1]/4, params=[0, 500, 10], alg = ['rk4Neutral', 2]) 
     
     for alg in [['rk4Neutral', 1], ['rk4Neutral', 2], ['rk4Neutral', 3],
                 ['eulerNeutral', 1], ['eulerNeutral', 2], ['eulerNeutral', 3], 
                 ['impTrNeutral', 1], ['impTrNeutral', 2], ['impTrNeutral', 3], 
-                ['eulerImpNeutral', 1], ['eulerImpNeutral', 2], ['eulerImpNeutral', 3]] :
+                ['eulerImpNeutral', 1], ['eulerImpNeutral', 2], ['eulerImpNeutral', 3]
+                ] :
     
-        output.write(alg[0]+str(alg[1])+'\n')
+        output.write(alg[0]+' '+str(alg[1])+'\n')
         
         r1 = []
         
-        for h in H[:-1] :
+        for h in H :
             
-            r1.append(func(1, h, params=[0, 500, 10], alg = alg, tref = tref, pref = pref))
+            r1.append(func(h, params=[0, 500, 10], alg = alg, tref = tref, pref = pref))
             
         output.write(str(r1)+'\n')
         
@@ -100,5 +100,5 @@ def testModel(func = stateArtModel, H = []) :
     
 
 
-# testModel(stateArtModel, H=1/(2**np.arange(4)))
-testModel(bellenModel, H=0.1/(2**np.arange(7)))
+testModel(stateArtModel, H=1/(2**np.arange(2, 7)))
+# testModel(bellenModel, H=0.1/(4**np.arange(7)))

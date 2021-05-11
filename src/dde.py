@@ -86,16 +86,19 @@ def rk4Delay(t0, X0, T, fname, params, alg = 'rk4Neutral', interpOrder = 2) :
                   fun_c, tau_c, N, params.ctypes.data_as(ctypes.POINTER(ctypes.c_longdouble)))
         
     else :
+        
+        print("Unknown function")
+        return([0], [0])
     
-        r = dde_c.rk4(dim, N0, t0.ctypes.data_as(ctypes.POINTER(ctypes.c_longdouble)), 
-                    X0.ctypes.data_as(ctypes.POINTER(ctypes.c_longdouble)), ctypes.c_float(T), 
-                    fun_c, tau_c, N, params.ctypes.data_as(ctypes.POINTER(ctypes.c_longdouble)))  
+        # r = dde_c.rk4(dim, N0, t0.ctypes.data_as(ctypes.POINTER(ctypes.c_longdouble)), 
+        #             X0.ctypes.data_as(ctypes.POINTER(ctypes.c_longdouble)), ctypes.c_float(T), 
+        #             fun_c, tau_c, N, params.ctypes.data_as(ctypes.POINTER(ctypes.c_longdouble)))  
     
     t = np.ctypeslib.as_array((ctypes.c_double * (N+N0)).from_address(ctypes.addressof(r.t.contents)))
     
- 
+    
     x = np.ctypeslib.as_array((ctypes.c_double * ((N+N0)*dim)).from_address(ctypes.addressof(r.x.contents)))
-
+    
     x = x.reshape((N+N0, dim))
 
     return(t, x)

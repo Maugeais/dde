@@ -215,8 +215,6 @@ void interpDer(int dim, int N, double *t, double* X, double tItrp, double *XItrp
             }
         }
         
-        printf("****** %f, %f, %f\n", polItrp[0], polItrp[1], polItrp[2]);
-
         
         // Puis évalue par le schéma de Horner
         XItrp[m] = polItrp[NN];
@@ -232,8 +230,6 @@ void interpDer(int dim, int N, double *t, double* X, double tItrp, double *XItrp
  
         } 
         
-        printf(" %f\n", XpItrp[0]);
-
         
         // Si non dérivable, alors calcul à droite ou à gauche...
         leftDer = (*(X+dim*(k+1)+m)-*(X+dim*k+m))/h;
@@ -251,8 +247,6 @@ void interpDer(int dim, int N, double *t, double* X, double tItrp, double *XItrp
         
     }
     
-//   printf("%f, %f\n", *(X+dim*(j+k-k0)+0), XItrp[0]);
-
 }
 
 

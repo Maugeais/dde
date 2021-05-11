@@ -6,9 +6,9 @@ import matplotlib.pyplot as plt
 K = 6
 omega1 = 2511
 
-def stateArtModel(TMax, h, params, alg = 'rk4Neutral') :    
+def stateArtModel(TMax, h, params, alg = 'rk4Neutral', interpOrder = 2) :    
     
-    t0 = np.arange(-1, h, h)
+    t0 = np.arange(-1e-3, h, h)
     X0 = np.zeros((len(t0), 2*K+2))  
     
     label = 'h= ' + str(h) + ', ' + alg #str(h) + ', ' + str(params) + 
@@ -23,7 +23,7 @@ def stateArtModel(TMax, h, params, alg = 'rk4Neutral') :
     t0 *= omega1
     T = TMax*omega1
         
-    t, X = dde.rk4Delay(t0, X0, T, 'stateArt.c', params, alg = alg) 
+    t, X = dde.rk4Delay(t0, X0, T, 'stateArt.c', params, alg = alg, interpOrder=interpOrder) 
     
     p = np.sum(X[:, ::2], axis = 1)
 
@@ -32,7 +32,7 @@ def stateArtModel(TMax, h, params, alg = 'rk4Neutral') :
     plt.legend()
     
     # Calcul les fréquences
-    w_len=1024*4
+    w_len=1024*8
     w_step=256//2
     
     f0_min=200
@@ -63,10 +63,12 @@ def stateArtModel(TMax, h, params, alg = 'rk4Neutral') :
     
     
     
-stateArtModel(20, 1/(1*44100), params=[30, 500, 20], alg = 'rk4Neutral')
-stateArtModel(20, 1/(2*44100), params=[30, 500, 20], alg = 'rk4Neutral') 
-stateArtModel(20, 1/(8*44100), params=[30, 500, 20], alg = 'rk4Neutral') 
-stateArtModel(20, 1/(16*44100), params=[30, 500, 20], alg = 'rk4Neutral') 
+stateArtModel(0.4, 1/(32*44100), params=[0, 500, 20], alg = 'eulerNeutral', interpOrder = 2)
+# stateArtModel(0.4, 1/(32*44100), params=[0, 500, 20], alg = 'eulerImpNeutral', interpOrder = 2)
+stateArtModel(0.4, 1/(32*44100), params=[0, 500, 20], alg = 'impTrNeutral', interpOrder = 2)
+# stateArtModel(0.4, 1/(32*44100), params=[0, 500, 20], alg = 'rk4Neutral', interpOrder = 2) 
+# stateArtModel(20, 1/(8*44100), params=[30, 500, 20], alg = 'rk4Neutral') 
+# stateArtModel(20, 1/(16*44100), params=[30, 500, 20], alg = 'rk4Neutral') 
 #stateArtModel(20, 1/(32*44100), params=[30, 500, 20], alg = 'rk4Neutral') 
 
 
