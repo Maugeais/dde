@@ -52,3 +52,11 @@ for i, alg in enumerate(content[:-1:2]) :
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
+    
+    plt.figure('Precision / computation time')
+    plt.loglog(T, eps, label = label, c = color[c[0]], linestyle=linestyle[c[1]])
+    plt.ylabel('Relative error')
+    plt.xlabel('Computation time (s)')    
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()

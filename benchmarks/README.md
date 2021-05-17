@@ -15,6 +15,7 @@ Therefore the computation time is in favour of the most simple one: explicit Eul
 
 The function f is polynomial only C1, but the solutions are regular. The higher order methods are to be favored. The interpolation order (indicated by solid, dashed or dotted curves) is to be taken equal to 2  (2 and 3 give the same results !), instead of order 1 which gives poorer results.
 
+The comparison is made with rk4 method, interpolation order = 2, and step size twice as small as the smallest.
 
 ![error](images/error_stateArt.svg)
 
