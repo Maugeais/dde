@@ -14,17 +14,33 @@ class ReVal(ctypes.Structure):
 
 dde_c = ctypes.CDLL(os.path.split(os.path.realpath(__file__))[0]+"/ddec.so")
 
-dde_c.rk4Neutral.restype = ReVal
+#dde_c.rk4Neutral.restype = ReVal
 dde_c.eulerNeutral.restype = ReVal
 dde_c.eulerImpNeutral.restype = ReVal
 dde_c.impTrNeutral.restype = ReVal
 dde_c.rk4Neutral.restype = ReVal
+dde_c.rk4.restype = ReVal
 
+#dde_c.freeme.argtypes = c_void_p,
+dde_c.freeme.restype = None
+
+dll = None
+
+dlclose_func = ctypes.CDLL(None).dlclose
+dlclose_func.argtypes = [ctypes.c_void_p]
+dlclose_func.restype = ctypes.c_int
 
 def compile(fname) :
+    
+    global dll
+    
+    # Il faut effacer la dll si elle existe déjà sinon on garde l'ancienne
+    if dll != None :
+        dlclose_func(dll._handle)
+
         
     root = '.'.join(fname.split('.')[:-1])
-
+    
     # Test si le fichier .so n'exite pas, ou bien que la date du .c est > à la date du .so
     
     if  not os.path.isfile("./"+root+".so") or (os.path.getmtime("./"+root+".so") < os.path.getmtime("./"+root+".c") ) :
@@ -32,15 +48,17 @@ def compile(fname) :
         print('Compilation de', fname+'...')
     
         subprocess.check_output(['gcc', '-O3', '-shared',  '-Wl,-soname,'+root, '-o', root+'.so', '-fPIC', fname])
+        
+        
+    dll = ctypes.CDLL("./"+root+".so")
+    fun_c = dll.fun
+    tau_c = dll.tau
     
-    fun_c = ctypes.CDLL("./"+root+".so").fun
-    tau_c = ctypes.CDLL("./"+root+".so").tau
-
     return(fun_c, tau_c)
 
     
 
-def rk4Delay(t0, X0, T, fname, params, alg = 'rk4Neutral', interpOrder = 2) :
+def rk4Delay(t0, X0, T, fname, params, alg = 'rk4Neutral', interpOrder = 2, free=False) :
     
     dde_c.preDerPol(interpOrder)
 
@@ -103,6 +121,34 @@ def rk4Delay(t0, X0, T, fname, params, alg = 'rk4Neutral', interpOrder = 2) :
 
     return(t, x)
 
+def rk4(t0, X0, h, T, fname, params) :
+    
+    fun_c, tau_c = compile(fname);
+        
+    N = int((T-t0)/h)
+    X0 = np.array(X0).astype(np.double)
+    
+    dim = X0.shape[0]
+            
+    params = np.array(params).astype(np.double)
+        
+    r = dde_c.rk4(dim, N, ctypes.c_float(t0), X0.ctypes.data_as(ctypes.POINTER(ctypes.c_longdouble)), ctypes.c_float(T), 
+                    fun_c, params.ctypes.data_as(ctypes.POINTER(ctypes.c_longdouble)))  
+
+    try :
+        t = np.ctypeslib.as_array((ctypes.c_double * (N)).from_address(ctypes.addressof(r.t.contents)))
+        
+        x = np.ctypeslib.as_array((ctypes.c_double * ((N)*dim)).from_address(ctypes.addressof(r.x.contents)))
+        
+        x = x.reshape((N, dim))
+                
+        return(t, x)
+    except :
+        print('erreur de convergence !!!')
+
+    
+def freeme(a) :
+    dde_c.freeme(a.ctypes.data_as(ctypes.POINTER(ctypes.c_longdouble)))
 
 def exampledde1() :    
     

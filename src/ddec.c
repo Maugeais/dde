@@ -571,75 +571,74 @@ struct re_val eulerImpNeutral(int dim, int N0, double *t0, double *X0, float T, 
     struct re_val res;
     res.t = t;
     res.x = X;
-    
+        
     return(res);
 }
 
-struct re_val rk4(int dim, int N0, double *t0, double *X0, float T, void (*f)(double, double *, double*,  double *, double *), double (*tau)(double, double *, double *), int N, double *params){
+struct re_val rk4(int dim, int N, float t0, double *X0, float T, void (*f)(double, double *, double*, double *), double *params){
     int i, j;
     double *t, *X, k1[dim], k2[dim], k3[dim], k4[dim], y[dim], h;
-    double delayed[dim];
-    h = t0[1]-t0[0]; 
-    
-    
-    t = malloc((N+N0) * sizeof(double));
-    X = malloc((N+N0) * dim * sizeof(double));
-    
+
+    h = (T-t0)/N;
+
+    t = malloc((N) * sizeof(double));
+    X = malloc((N) * dim * sizeof(double));
+        
     // Création du vecteur temps
-    for (i = 0; i < N0; i++){
-        t[i] = t0[i];
-    }
-    
-    for (i = N0; i < N+N0; i++){
+    t[0] = t0;
+    for (i = 1; i < N; i++){
         t[i] = t[i-1]+h;
     }
-    
     // Condition initiale
-    for (j=0; j < dim*N0; j++){
+    for (j=0; j < dim; j++){
         *(X+j) = *(X0+j);
     }
     
     // Boucle principale
-    for (i = N0-1; i <= N+N0-2; i++){
+    for (i = 0; i < N-1; i++){
         
         // Calcul de k1
           //retard        
-        interp(dim, N+N0, t, X, tau(t[i], X+dim*i, params), delayed);
-        f(*(t+i), X+dim*i, delayed, k1, params);
+        f(*(t+i), X+dim*i, k1, params);
         
         
         // Calcul de k2
         for (j = 0; j < dim; j++){
             y[j] = *(X+j+dim*i)+h/2*k1[j];
         }
-        interp(dim, N+N0, t, X, tau(t[i]+h/2, y, params), delayed);
-        f(*(t+i)+h/2, y, delayed, k2, params);
+        f(*(t+i)+h/2, y, k2, params);
         
         
         // Calcul de k3
         for (j = 0; j < dim; j++){
             y[j] = *(X+j+dim*i)+h/2*k2[j];
         }
-        interp(dim, N+N0, t, X, tau(t[i]+h/2, y, params), delayed);
-        f(*(t+i)+h/2, y, delayed, k3, params);
+        f(*(t+i)+h/2, y, k3, params);
         
         
         // Calcul de k4
         for (j = 0; j < dim; j++){
             y[j] = *(X+j+dim*i)+h*k3[j];
         }
-        interp(dim, N+N0, t, X, tau(t[i]+h/2, y, params), delayed);
-        f(*(t+i)+h, y, delayed, k4, params);
+        f(*(t+i)+h, y, k4, params);
         
         // Calcul du résultat
         for (j = 0; j < dim; j++){
             *(X+j+dim*(i+1)) = *(X+j+dim*i)+h/6*(k1[j]+2*k2[j]+2*k3[j]+k4[j]);
         }
-    }
         
+    }
+
     struct re_val r;
+        
     r.t = t;
     r.x = X;
     
     return(r);
+}
+
+void freeme(double *ptr)
+{
+    //printf("freeing address: %p\n", ptr);
+    free(ptr);
 }
